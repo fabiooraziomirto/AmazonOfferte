@@ -39,7 +39,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -116,7 +115,7 @@
 
         /* Hero */
         .hero {
-            padding: 6rem 0 4rem;
+            padding: 6rem 0 3rem;
             text-align: center;
         }
 
@@ -148,6 +147,390 @@
             margin: 0 auto 3rem;
         }
 
+        /* Tab Section */
+        .tab-section {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 4rem;
+            overflow: hidden;
+        }
+
+        .tabs-nav {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .tab-icon {
+            font-size: 1.5rem;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2.5rem;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Search Tab */
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-btn {
+            padding: 1.25rem 2.5rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .search-btn:hover {
+            background: #e55a2b;
+            box-shadow: 0 8px 24px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .category-pills {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pill {
+            padding: 0.5rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Gift Finder Quiz */
+        .quiz-progress {
+            height: 4px;
+            background: var(--bg-secondary);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .quiz-question {
+            display: none;
+        }
+
+        .quiz-question.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .question-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .option-emoji {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+
+        .option-label {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .quiz-nav {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .btn-back {
+            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            border-color: var(--accent);
+        }
+
+        .btn-next {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-next:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results */
+        .quiz-results {
+            display: none;
+            text-align: center;
+        }
+
+        .quiz-results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .results-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .results-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .result-image {
+            width: 100%;
+            height: 180px;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .result-info {
+            padding: 1.5rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .result-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .result-btn:hover {
+            background: #e55a2b;
+        }
+
+        .btn-restart {
+            padding: 1rem 2.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-restart:hover {
+            border-color: var(--accent);
+        }
+
         /* Filter bar */
         .filter-bar {
             display: flex;
@@ -171,20 +554,6 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .filter-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         .filter-btn:hover {
@@ -217,10 +586,10 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
-            animation: fadeIn 0.6s ease backwards;
+            animation: fadeInCard 0.6s ease backwards;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInCard {
             from {
                 opacity: 0;
                 transform: translateY(30px);
@@ -373,6 +742,59 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Newsletter */
+        .newsletter {
+            background: var(--gradient-1);
+            padding: 5rem 0;
+            margin: 4rem 0;
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .newsletter h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .newsletter-btn {
+            padding: 1.25rem 2.5rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            color: #764ba2;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
         /* Footer */
         footer {
             padding: 4rem 0;
@@ -395,6 +817,18 @@
 
             .hero h1 {
                 font-size: 2.5rem;
+            }
+
+            .tabs-nav {
+                flex-direction: column;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
             }
 
             .offers-grid {
@@ -444,6 +878,214 @@
             </p>
         </section>
 
+        <!-- Tab Section -->
+        <div class="tab-section">
+            <div class="tabs-nav">
+                <button class="tab-btn" data-tab="search" onclick="switchTab('search')">
+                    <span class="tab-icon">🔍</span>
+                    <span>Cerca Prodotto</span>
+                </button>
+                <button class="tab-btn active" data-tab="gift" onclick="switchTab('gift')">
+                    <span class="tab-icon">🎁</span>
+                    <span>Trova Regalo Perfetto</span>
+                </button>
+            </div>
+
+            <!-- Search Tab -->
+            <div class="tab-content" id="search-tab">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="search-input"
+                        placeholder="Cerca prodotti su Amazon... (es: cuffie wireless, smartwatch)"
+                    >
+                    <button class="search-btn" onclick="searchAmazon()">Cerca</button>
+                </div>
+                <div class="category-pills">
+                    <span class="pill" onclick="quickSearch('elettronica')">📱 Elettronica</span>
+                    <span class="pill" onclick="quickSearch('casa')">🏠 Casa</span>
+                    <span class="pill" onclick="quickSearch('moda')">👗 Moda</span>
+                    <span class="pill" onclick="quickSearch('sport')">⚽ Sport</span>
+                    <span class="pill" onclick="quickSearch('cucina')">🍳 Cucina</span>
+                    <span class="pill" onclick="quickSearch('bellezza')">💄 Bellezza</span>
+                </div>
+            </div>
+
+            <!-- Gift Finder Tab -->
+            <div class="tab-content active" id="gift-tab">
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="progress-bar"></div>
+                </div>
+
+                <!-- Question 1 -->
+                <div class="quiz-question active" data-q="1">
+                    <div class="question-label">Domanda 1 di 4</div>
+                    <h3 class="question-title">Per quale occasione?</h3>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(1, 'compleanno')">
+                            <span class="option-emoji">🎂</span>
+                            <div class="option-label">Compleanno</div>
+                            <div class="option-desc">Un giorno speciale</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(1, 'natale')">
+                            <span class="option-emoji">🎄</span>
+                            <div class="option-label">Natale</div>
+                            <div class="option-desc">Magia delle feste</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(1, 'anniversario')">
+                            <span class="option-emoji">💝</span>
+                            <div class="option-label">Anniversario</div>
+                            <div class="option-desc">Celebra l'amore</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(1, 'laurea')">
+                            <span class="option-emoji">🎓</span>
+                            <div class="option-label">Laurea</div>
+                            <div class="option-desc">Grande traguardo</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(1, 'altro')">
+                            <span class="option-emoji">🎁</span>
+                            <div class="option-label">Altro</div>
+                            <div class="option-desc">Qualsiasi occasione</div>
+                        </div>
+                    </div>
+                    <div class="quiz-nav">
+                        <button class="btn-next" onclick="nextQuestion(1)" disabled id="next-1">Continua →</button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-question" data-q="2">
+                    <div class="question-label">Domanda 2 di 4</div>
+                    <h3 class="question-title">Per chi è il regalo?</h3>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(2, 'fidanzata')">
+                            <span class="option-emoji">👩‍❤️‍💋‍👨</span>
+                            <div class="option-label">Fidanzata</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'fidanzato')">
+                            <span class="option-emoji">👨‍❤️‍💋‍👩</span>
+                            <div class="option-label">Fidanzato</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'madre')">
+                            <span class="option-emoji">👩</span>
+                            <div class="option-label">Mamma</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'padre')">
+                            <span class="option-emoji">👨</span>
+                            <div class="option-label">Papà</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'sorella')">
+                            <span class="option-emoji">👧</span>
+                            <div class="option-label">Sorella</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'fratello')">
+                            <span class="option-emoji">👦</span>
+                            <div class="option-label">Fratello</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'amico')">
+                            <span class="option-emoji">🤝</span>
+                            <div class="option-label">Amico/a</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(2, 'collega')">
+                            <span class="option-emoji">💼</span>
+                            <div class="option-label">Collega</div>
+                        </div>
+                    </div>
+                    <div class="quiz-nav">
+                        <button class="btn-back" onclick="prevQuestion(2)">← Indietro</button>
+                        <button class="btn-next" onclick="nextQuestion(2)" disabled id="next-2">Continua →</button>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-question" data-q="3">
+                    <div class="question-label">Domanda 3 di 4</div>
+                    <h3 class="question-title">Qual è il tuo budget?</h3>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(3, 'economico')">
+                            <span class="option-emoji">💰</span>
+                            <div class="option-label">€15-30</div>
+                            <div class="option-desc">Budget ridotto</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(3, 'medio')">
+                            <span class="option-emoji">💵</span>
+                            <div class="option-label">€30-100</div>
+                            <div class="option-desc">Medio</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(3, 'alto')">
+                            <span class="option-emoji">💎</span>
+                            <div class="option-label">€100-300</div>
+                            <div class="option-desc">Generoso</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(3, 'lusso')">
+                            <span class="option-emoji">👑</span>
+                            <div class="option-label">€300+</div>
+                            <div class="option-desc">Premium</div>
+                        </div>
+                    </div>
+                    <div class="quiz-nav">
+                        <button class="btn-back" onclick="prevQuestion(3)">← Indietro</button>
+                        <button class="btn-next" onclick="nextQuestion(3)" disabled id="next-3">Continua →</button>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-question" data-q="4">
+                    <div class="question-label">Domanda 4 di 4</div>
+                    <h3 class="question-title">Interessi principali?</h3>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(4, 'tecnologia')">
+                            <span class="option-emoji">📱</span>
+                            <div class="option-label">Tecnologia</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'sport')">
+                            <span class="option-emoji">⚽</span>
+                            <div class="option-label">Sport</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'moda')">
+                            <span class="option-emoji">👗</span>
+                            <div class="option-label">Moda</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'cucina')">
+                            <span class="option-emoji">🍳</span>
+                            <div class="option-label">Cucina</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'libri')">
+                            <span class="option-emoji">📚</span>
+                            <div class="option-label">Lettura</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'gaming')">
+                            <span class="option-emoji">🎮</span>
+                            <div class="option-label">Gaming</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'musica')">
+                            <span class="option-emoji">🎵</span>
+                            <div class="option-label">Musica</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(4, 'viaggi')">
+                            <span class="option-emoji">✈️</span>
+                            <div class="option-label">Viaggi</div>
+                        </div>
+                    </div>
+                    <div class="quiz-nav">
+                        <button class="btn-back" onclick="prevQuestion(4)">← Indietro</button>
+                        <button class="btn-next" onclick="showResults()" disabled id="next-4">Vedi Risultati 🎉</button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="quiz-results" id="quiz-results">
+                    <div class="results-emoji">🎉</div>
+                    <h3 class="results-title">I tuoi regali perfetti!</h3>
+                    <p class="results-subtitle">Selezionati in base alle tue preferenze</p>
+                    <div class="results-grid" id="results-grid"></div>
+                    <button class="btn-restart" onclick="restartQuiz()">🔄 Ricomincia</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
         <div class="filter-bar">
             <button class="filter-btn active" data-category="all">Tutte</button>
             <button class="filter-btn" data-category="elettronica">📱 Elettronica</button>
@@ -455,12 +1097,23 @@
             <button class="filter-btn" data-category="bellezza">💄 Bellezza</button>
         </div>
 
+        <!-- Offers Grid -->
         <div id="offers-container">
             <div class="loading">
                 <div class="spinner"></div>
                 <p>Caricamento offerte...</p>
             </div>
         </div>
+
+        <!-- Newsletter -->
+        <section class="newsletter">
+            <h2>Non Perdere le Migliori Offerte</h2>
+            <p>Iscriviti alla newsletter e ricevi sconti esclusivi ogni giorno</p>
+            <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                <input type="email" class="newsletter-input" placeholder="La tua email" required>
+                <button type="submit" class="newsletter-btn">Iscriviti</button>
+            </form>
+        </section>
     </main>
 
     <footer>
@@ -472,138 +1125,6 @@
         </div>
     </footer>
 
-    <script>
-        const API_URL = '/api';
-        let currentCategory = 'all';
-
-        // Fetch offers
-        async function fetchOffers(category = 'all') {
-            try {
-                const params = new URLSearchParams({
-                    limit: 50,
-                    published_only: true
-                });
-
-                if (category !== 'all') {
-                    params.append('category', category);
-                }
-
-                const response = await fetch(`${API_URL}/offers?${params}`);
-                const offers = await response.json();
-
-                displayOffers(offers);
-                updateStats(offers.length);
-            } catch (error) {
-                console.error('Error fetching offers:', error);
-                document.getElementById('offers-container').innerHTML = `
-                    <div class="loading">
-                        <p>Errore nel caricamento delle offerte. Riprova più tardi.</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Display offers
-        function displayOffers(offers) {
-            const container = document.getElementById('offers-container');
-
-            if (offers.length === 0) {
-                container.innerHTML = `
-                    <div class="loading">
-                        <p>Nessuna offerta disponibile al momento. Controlla più tardi!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const grid = document.createElement('div');
-            grid.className = 'offers-grid';
-
-            offers.forEach(offer => {
-                const card = createOfferCard(offer);
-                grid.appendChild(card);
-            });
-
-            container.innerHTML = '';
-            container.appendChild(grid);
-        }
-
-        // Create offer card
-        function createOfferCard(offer) {
-            const card = document.createElement('div');
-            card.className = 'offer-card';
-
-            const hasDiscount = offer.original_price && offer.discounted_price;
-            const discountBadge = hasDiscount ? 
-                `<div class="offer-badge">-${offer.discount_percentage}%</div>` : '';
-
-            const imageUrl = offer.image_url || 'https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image';
-
-            const priceHTML = hasDiscount ? `
-                <div class="offer-prices">
-                    <span class="price-old">€${offer.original_price.toFixed(2)}</span>
-                    <span class="price-new">€${offer.discounted_price.toFixed(2)}</span>
-                </div>
-            ` : offer.discounted_price ? `
-                <div class="offer-prices">
-                    <span class="price-new">€${offer.discounted_price.toFixed(2)}</span>
-                </div>
-            ` : '';
-
-            card.innerHTML = `
-                ${discountBadge}
-                <img src="${imageUrl}" alt="${offer.product_name}" class="offer-image" onerror="this.src='https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image'">
-                <div class="offer-content">
-                    ${offer.category ? `<div class="offer-category">${offer.category}</div>` : ''}
-                    <h3 class="offer-title">${offer.product_name}</h3>
-                    ${offer.description ? `<p class="offer-description">${offer.description}</p>` : ''}
-                    ${priceHTML}
-                    <a href="${offer.affiliate_link}" 
-                       target="_blank" 
-                       rel="noopener noreferrer nofollow"
-                       class="offer-cta"
-                       onclick="trackClick(${offer.id})">
-                        Vedi Offerta su Amazon →
-                    </a>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // Track click
-        async function trackClick(offerId) {
-            try {
-                await fetch(`${API_URL}/offers/${offerId}/click`, {
-                    method: 'POST'
-                });
-            } catch (error) {
-                console.error('Error tracking click:', error);
-            }
-        }
-
-        // Update stats
-        function updateStats(count) {
-            document.getElementById('total-offers').textContent = count;
-        }
-
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const category = btn.dataset.category;
-                currentCategory = category;
-                fetchOffers(category);
-            });
-        });
-
-        // Initial load
-        fetchOffers();
-
-        // Refresh every 5 minutes
-        setInterval(() => fetchOffers(currentCategory), 5 * 60 * 1000);
-    </script>
+    <script src="/js/main.js"></script>
 </body>
 </html>

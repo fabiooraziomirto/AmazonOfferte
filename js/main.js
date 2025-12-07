@@ -1,6 +1,6 @@
 // Configuration
 const CONFIG = {
-    API_URL: '/api',
+    API_URL: 'https://amazon-affiliate-api.fabmi1234.workers.dev',
     AMAZON_AFFILIATE_ID: 'fabmi123402-21', // Inserisci il tuo Amazon Associates ID
     TELEGRAM_URL: 'https://t.me/amazondeal_me' // Inserisci il link al tuo canale Telegram
 };

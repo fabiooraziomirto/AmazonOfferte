@@ -881,18 +881,18 @@
         <!-- Tab Section -->
         <div class="tab-section">
             <div class="tabs-nav">
-                <button class="tab-btn" data-tab="search" onclick="switchTab('search')">
+                <button class="tab-btn active" data-tab="search" onclick="switchTab('search')">
                     <span class="tab-icon">🔍</span>
                     <span>Cerca Prodotto</span>
                 </button>
-                <button class="tab-btn active" data-tab="gift" onclick="switchTab('gift')">
+                <button class="tab-btn" data-tab="gift" onclick="switchTab('gift')">
                     <span class="tab-icon">🎁</span>
                     <span>Trova Regalo Perfetto</span>
                 </button>
             </div>
 
             <!-- Search Tab -->
-            <div class="tab-content" id="search-tab">
+            <div class="tab-content active" id="search-tab">
                 <div class="search-box">
                     <input 
                         type="text" 
@@ -913,7 +913,7 @@
             </div>
 
             <!-- Gift Finder Tab -->
-            <div class="tab-content active" id="gift-tab">
+            <div class="tab-content" id="gift-tab">
                 <div class="quiz-progress">
                     <div class="quiz-progress-bar" id="progress-bar"></div>
                 </div>

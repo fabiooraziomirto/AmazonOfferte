@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Migliori Offerte Amazon - Sconti Imperdibili</title>
+    <meta name="description" content="Scopri le migliori offerte Amazon selezionate per te. Sconti fino al 70% su elettronica, casa, moda e molto altro.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #141920;
+            --bg-card: #1a1f28;
+            --accent: #ff6b35;
+            --accent-glow: rgba(255, 107, 53, 0.15);
+            --text-primary: #e8eaed;
+            --text-secondary: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.03) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 20, 0.8);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .stat {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--accent);
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        /* Grid */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+
+        /* Card */
+        .offer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            animation: fadeIn 0.6s ease backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .offer-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent);
+        }
+
+        .offer-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .offer-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 4px 16px var(--accent-glow);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .offer-content {
+            padding: 1.5rem;
+        }
+
+        .offer-category {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .offer-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .offer-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .offer-prices {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .price-new {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .offer-cta {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offer-cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .offer-cta:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .offer-cta:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .footer-disclaimer {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-stats {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .offers-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .filter-bar {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Stagger animation */
+        .offer-card:nth-child(1) { animation-delay: 0.1s; }
+        .offer-card:nth-child(2) { animation-delay: 0.2s; }
+        .offer-card:nth-child(3) { animation-delay: 0.3s; }
+        .offer-card:nth-child(4) { animation-delay: 0.4s; }
+        .offer-card:nth-child(5) { animation-delay: 0.5s; }
+        .offer-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">DEAL//HUNTER</div>
+                <div class="header-stats">
+                    <div class="stat">
+                        Offerte: <span class="stat-value" id="total-offers">0</span>
+                    </div>
+                    <div class="stat">
+                        Risparmiati: <span class="stat-value">€50K+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>
+                Le Migliori <span class="gradient-text">Offerte Amazon</span><br>
+                Selezionate per Te
+            </h1>
+            <p class="hero-subtitle">
+                Sconti verificati fino al 70%. Aggiornate ogni giorno. Zero spam.
+            </p>
+        </section>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-category="all">Tutte</button>
+            <button class="filter-btn" data-category="elettronica">📱 Elettronica</button>
+            <button class="filter-btn" data-category="casa">🏠 Casa</button>
+            <button class="filter-btn" data-category="moda">👗 Moda</button>
+            <button class="filter-btn" data-category="sport">⚽ Sport</button>
+            <button class="filter-btn" data-category="giochi">🎮 Giochi</button>
+            <button class="filter-btn" data-category="cucina">🍳 Cucina</button>
+            <button class="filter-btn" data-category="bellezza">💄 Bellezza</button>
+        </div>
+
+        <div id="offers-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Caricamento offerte...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Deal Hunter. Tutti i diritti riservati.</p>
+            <p class="footer-disclaimer">
+                Questo sito contiene link affiliati Amazon. Potremmo ricevere una commissione per gli acquisti effettuati tramite questi link.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '/api';
+        let currentCategory = 'all';
+
+        // Fetch offers
+        async function fetchOffers(category = 'all') {
+            try {
+                const params = new URLSearchParams({
+                    limit: 50,
+                    published_only: true
+                });
+
+                if (category !== 'all') {
+                    params.append('category', category);
+                }
+
+                const response = await fetch(`${API_URL}/offers?${params}`);
+                const offers = await response.json();
+
+                displayOffers(offers);
+                updateStats(offers.length);
+            } catch (error) {
+                console.error('Error fetching offers:', error);
+                document.getElementById('offers-container').innerHTML = `
+                    <div class="loading">
+                        <p>Errore nel caricamento delle offerte. Riprova più tardi.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display offers
+        function displayOffers(offers) {
+            const container = document.getElementById('offers-container');
+
+            if (offers.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <p>Nessuna offerta disponibile al momento. Controlla più tardi!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'offers-grid';
+
+            offers.forEach(offer => {
+                const card = createOfferCard(offer);
+                grid.appendChild(card);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        // Create offer card
+        function createOfferCard(offer) {
+            const card = document.createElement('div');
+            card.className = 'offer-card';
+
+            const hasDiscount = offer.original_price && offer.discounted_price;
+            const discountBadge = hasDiscount ? 
+                `<div class="offer-badge">-${offer.discount_percentage}%</div>` : '';
+
+            const imageUrl = offer.image_url || 'https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image';
+
+            const priceHTML = hasDiscount ? `
+                <div class="offer-prices">
+                    <span class="price-old">€${offer.original_price.toFixed(2)}</span>
+                    <span class="price-new">€${offer.discounted_price.toFixed(2)}</span>
+                </div>
+            ` : offer.discounted_price ? `
+                <div class="offer-prices">
+                    <span class="price-new">€${offer.discounted_price.toFixed(2)}</span>
+                </div>
+            ` : '';
+
+            card.innerHTML = `
+                ${discountBadge}
+                <img src="${imageUrl}" alt="${offer.product_name}" class="offer-image" onerror="this.src='https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image'">
+                <div class="offer-content">
+                    ${offer.category ? `<div class="offer-category">${offer.category}</div>` : ''}
+                    <h3 class="offer-title">${offer.product_name}</h3>
+                    ${offer.description ? `<p class="offer-description">${offer.description}</p>` : ''}
+                    ${priceHTML}
+                    <a href="${offer.affiliate_link}" 
+                       target="_blank" 
+                       rel="noopener noreferrer nofollow"
+                       class="offer-cta"
+                       onclick="trackClick(${offer.id})">
+                        Vedi Offerta su Amazon →
+                    </a>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Track click
+        async function trackClick(offerId) {
+            try {
+                await fetch(`${API_URL}/offers/${offerId}/click`, {
+                    method: 'POST'
+                });
+            } catch (error) {
+                console.error('Error tracking click:', error);
+            }
+        }
+
+        // Update stats
+        function updateStats(count) {
+            document.getElementById('total-offers').textContent = count;
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const category = btn.dataset.category;
+                currentCategory = category;
+                fetchOffers(category);
+            });
+        });
+
+        // Initial load
+        fetchOffers();
+
+        // Refresh every 5 minutes
+        setInterval(() => fetchOffers(currentCategory), 5 * 60 * 1000);
+    </script>
+</body>
+</html>

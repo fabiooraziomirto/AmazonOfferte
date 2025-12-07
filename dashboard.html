@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Amazon Affiliate</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0f0f0f;
+            --surface: #1a1a1a;
+            --surface-light: #242424;
+            --primary: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.2);
+            --danger: #ff3366;
+            --warning: #ffaa00;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Form */
+        .form-section {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+
+        .form-section h2 {
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, textarea, select {
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Offers List */
+        .offers-list {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .offers-list h2 {
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .offer-item {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .offer-item:hover {
+            border-color: var(--primary);
+        }
+
+        .offer-image-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .offer-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .offer-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .offer-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-published {
+            background: var(--primary-glow);
+            color: var(--primary);
+        }
+
+        .status-scheduled {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .status-pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dim);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--surface);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+            display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .offer-item {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>// ADMIN DASHBOARD</h1>
+            <button class="btn btn-secondary" onclick="window.location.href='/'">
+                Vedi Sito Pubblico →
+            </button>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Offerte Totali</div>
+                <div class="stat-value" id="stat-total">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pubblicate</div>
+                <div class="stat-value" id="stat-published">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Visualizzazioni</div>
+                <div class="stat-value" id="stat-views">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">CTR</div>
+                <div class="stat-value" id="stat-ctr">-</div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-section">
+            <h2>// NUOVA OFFERTA</h2>
+            <form id="offer-form">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="product-name">Nome Prodotto *</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="affiliate-link">Link Affiliato Amazon *</label>
+                        <input type="url" id="affiliate-link" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="original-price">Prezzo Originale (€)</label>
+                        <input type="number" id="original-price" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discounted-price">Prezzo Scontato (€)</label>
+                        <input type="number" id="discounted-price" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image-url">URL Immagine</label>
+                        <input type="url" id="image-url">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Categoria</label>
+                        <select id="category">
+                            <option value="">Nessuna</option>
+                            <option value="Elettronica">Elettronica</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Moda">Moda</option>
+                            <option value="Sport">Sport</option>
+                            <option value="Libri">Libri</option>
+                            <option value="Giochi">Giochi</option>
+                            <option value="Cucina">Cucina</option>
+                            <option value="Bellezza">Bellezza</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="description">Descrizione</label>
+                        <textarea id="description"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="publish-btn">
+                        Pubblica Ora
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Offers List -->
+        <div class="offers-list">
+            <h2>// OFFERTE RECENTI</h2>
+            <div id="offers-container">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_URL = '/api';
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const stats = await response.json();
+
+                document.getElementById('stat-total').textContent = stats.total_offers;
+                document.getElementById('stat-published').textContent = stats.published_offers;
+                document.getElementById('stat-views').textContent = stats.total_views;
+                document.getElementById('stat-ctr').textContent = stats.ctr + '%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load offers
+        async function loadOffers() {
+            try {
+                const response = await fetch(`${API_URL}/offers?limit=20&published_only=false`);
+                const offers = await response.json();
+
+                const container = document.getElementById('offers-container');
+                
+                if (offers.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-dim);">Nessuna offerta ancora.</p>';
+                    return;
+                }
+
+                container.innerHTML = offers.map(offer => {
+                    const status = offer.published ? 'published' : 
+                                 offer.scheduled_at ? 'scheduled' : 'pending';
+                    const statusText = offer.published ? 'Pubblicata' :
+                                     offer.scheduled_at ? 'Programmata' : 'In attesa';
+
+                    const imageUrl = offer.image_url || 'https://via.placeholder.com/80';
+                    
+                    const price = offer.discounted_price ? 
+                        `€${offer.discounted_price.toFixed(2)}` : '-';
+
+                    return `
+                        <div class="offer-item">
+                            <img src="${imageUrl}" class="offer-image-thumb" alt="${offer.product_name}">
+                            <div class="offer-info">
+                                <h3>${offer.product_name}</h3>
+                                <div class="offer-meta">
+                                    <span>${price}</span>
+                                    <span>•</span>
+                                    <span>${offer.category || 'Senza categoria'}</span>
+                                    <span>•</span>
+                                    <span class="status-badge status-${status}">${statusText}</span>
+                                </div>
+                            </div>
+                            <div class="offer-actions">
+                                <button class="btn btn-danger btn-small" onclick="deleteOffer(${offer.id})">
+                                    Elimina
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading offers:', error);
+                document.getElementById('offers-container').innerHTML = 
+                    '<p style="color: var(--danger);">Errore nel caricamento.</p>';
+            }
+        }
+
+        // Submit form
+        document.getElementById('offer-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('publish-btn');
+            btn.textContent = 'Pubblicazione...';
+            btn.disabled = true;
+
+            const formData = {
+                product_name: document.getElementById('product-name').value,
+                affiliate_link: document.getElementById('affiliate-link').value,
+                original_price: parseFloat(document.getElementById('original-price').value) || null,
+                discounted_price: parseFloat(document.getElementById('discounted-price').value) || null,
+                image_url: document.getElementById('image-url').value || null,
+                category: document.getElementById('category').value || null,
+                description: document.getElementById('description').value || null,
+                publish_now: true
+            };
+
+            // Calculate discount
+            if (formData.original_price && formData.discounted_price) {
+                formData.discount_percentage = Math.round(
+                    ((formData.original_price - formData.discounted_price) / formData.original_price) * 100
+                );
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/offers`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showToast('✅ Offerta pubblicata con successo!');
+                    resetForm();
+                    loadOffers();
+                    loadStats();
+                } else {
+                    throw new Error('Errore nella pubblicazione');
+                }
+            } catch (error) {
+                console.error('Error creating offer:', error);
+                showToast('❌ Errore nella pubblicazione');
+            } finally {
+                btn.textContent = 'Pubblica Ora';
+                btn.disabled = false;
+            }
+        });
+
+        // Delete offer
+        async function deleteOffer(id) {
+            if (!confirm('Sei sicuro di voler eliminare questa offerta?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/offers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast('✅ Offerta eliminata');
+                    loadOffers();
+                    loadStats();
+                } else {
+                    throw new Error('Errore');
+                }
+            } catch (error) {
+                console.error('Error deleting offer:', error);
+                showToast('❌ Errore nell\'eliminazione');
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('offer-form').reset();
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initial load
+        loadStats();
+        loadOffers();
+
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            loadStats();
+            loadOffers();
+        }, 30000);
+    </script>
+</body>
+</html>

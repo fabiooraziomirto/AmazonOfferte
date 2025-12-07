@@ -419,7 +419,7 @@ function trackGiftClick(productName) {
     }
 
     // Send to API
-    fetch(`${CONFIG.API_URL}/track/gift-click`, {
+    fetch(`${CONFIG.API_URL}/api/track/gift-click`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -444,7 +444,7 @@ async function fetchOffers(category = 'all') {
             params.append('category', category);
         }
 
-        const response = await fetch(`${CONFIG.API_URL}/offers?${params}`);
+        const response = await fetch(`${CONFIG.API_URL}/api/offers?${params}`);
         const offers = await response.json();
 
         displayOffers(offers);
@@ -527,7 +527,7 @@ function createOfferCard(offer) {
 
 async function trackClick(offerId) {
     try {
-        await fetch(`${CONFIG.API_URL}/offers/${offerId}/click`, {
+        await fetch(`${CONFIG.API_URL}/api/offers/${offerId}/click`, {
             method: 'POST'
         });
     } catch (error) {
@@ -569,7 +569,7 @@ async function subscribeNewsletter(event) {
     const email = event.target.querySelector('input[type="email"]').value;
     
     try {
-        const response = await fetch(`${CONFIG.API_URL}/newsletter/subscribe`, {
+        const response = await fetch(`${CONFIG.API_URL}/api/newsletter/subscribe`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })

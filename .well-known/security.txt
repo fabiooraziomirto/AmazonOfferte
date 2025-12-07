@@ -1,0 +1,12 @@
+Contact: mailto:security@yourdomain.com
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: it, en
+Canonical: https://trovailregaloperfetto.pages.dev/.well-known/security.txt
+
+# Policy
+Policy: https://trovailregaloperfetto.pages.dev/security-policy
+
+# Amazon Affiliate Disclosure
+# This website is a participant in the Amazon Services LLC Associates Program,
+# an affiliate advertising program designed to provide a means for sites to earn
+# advertising fees by advertising and linking to amazon.it

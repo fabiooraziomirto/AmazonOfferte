@@ -1,23 +1,103 @@
 // Configuration
 const CONFIG = {
     API_URL: 'https://amazon-affiliate-api.fabmi1234.workers.dev',
-    AMAZON_AFFILIATE_ID: 'fabmi123402-21', // Inserisci il tuo Amazon Associates ID
-    TELEGRAM_URL: 'https://t.me/amazondeal_me' // Inserisci il link al tuo canale Telegram
+    AMAZON_AFFILIATE_ID: 'fabmi123402-21',
+    TELEGRAM_URL: 'https://t.me/amazondeal_me',
+    // Timeout per richieste API
+    API_TIMEOUT: 10000,
+    // Retry automatico
+    MAX_RETRIES: 3,
 };
 
 // State
 const state = {
     currentCategory: 'all',
     quizAnswers: {},
-    giftDatabase: null
+    giftDatabase: null,
+    requestCache: new Map(),
 };
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+// Fetch con timeout e retry
+async function fetchWithRetry(url, options = {}, retries = CONFIG.MAX_RETRIES) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                ...options.headers,
+            },
+        });
+
+        clearTimeout(timeout);
+
+        if (!response.ok && retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return fetchWithRetry(url, options, retries - 1);
+        }
+
+        return response;
+    } catch (error) {
+        clearTimeout(timeout);
+        
+        if (retries > 0 && error.name !== 'AbortError') {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return fetchWithRetry(url, options, retries - 1);
+        }
+        
+        throw error;
+    }
+}
+
+// Cache per richieste
+function getCachedData(key, ttl = 300000) { // 5 minuti default
+    const cached = state.requestCache.get(key);
+    if (cached && Date.now() - cached.timestamp < ttl) {
+        return cached.data;
+    }
+    return null;
+}
+
+function setCachedData(key, data) {
+    state.requestCache.set(key, {
+        data,
+        timestamp: Date.now(),
+    });
+}
+
+// Sanitize input
+function sanitizeInput(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+}
+
+// Genera URL Amazon sicuro
+function generateAmazonUrl(query, asin = null) {
+    const baseUrl = 'https://www.amazon.it';
+    const tag = `tag=${encodeURIComponent(CONFIG.AMAZON_AFFILIATE_ID)}`;
+    
+    if (asin) {
+        return `${baseUrl}/dp/${encodeURIComponent(asin)}?${tag}`;
+    }
+    
+    const searchQuery = encodeURIComponent(sanitizeInput(query));
+    return `${baseUrl}/s?k=${searchQuery}&${tag}`;
+}
 
 // ============================================
 // TAB SWITCHING
 // ============================================
 
 function switchTab(tabName) {
-    // Remove active from all tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -25,7 +105,6 @@ function switchTab(tabName) {
         content.classList.remove('active');
     });
 
-    // Add active to selected tab
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     document.getElementById(`${tabName}-tab`).classList.add('active');
 }
@@ -35,82 +114,59 @@ function switchTab(tabName) {
 // ============================================
 
 function searchAmazon() {
-    const query = document.getElementById('search-input').value.trim();
+    const input = document.getElementById('search-input');
+    const query = input.value.trim();
+    
     if (!query) {
-        alert('Inserisci un termine di ricerca');
+        showNotification('Inserisci un termine di ricerca', 'warning');
+        input.focus();
         return;
     }
 
-    const amazonUrl = `https://www.amazon.it/s?k=${encodeURIComponent(query)}&tag=${CONFIG.AMAZON_AFFILIATE_ID}`;
-    window.open(amazonUrl, '_blank');
+    // Sanitize e valida input
+    const sanitizedQuery = sanitizeInput(query);
+    
+    // Track search
+    trackEvent('search', { query: sanitizedQuery });
+
+    // Apri Amazon
+    const amazonUrl = generateAmazonUrl(sanitizedQuery);
+    window.open(amazonUrl, '_blank', 'noopener,noreferrer');
 }
 
 function quickSearch(category) {
-    document.getElementById('search-input').value = category;
+    const input = document.getElementById('search-input');
+    input.value = category;
     searchAmazon();
 }
-
-// Search on Enter key
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchAmazon();
-            }
-        });
-    }
-});
 
 // ============================================
 // GIFT FINDER QUIZ
 // ============================================
 
 function selectOption(questionNum, value) {
-    // Remove selection from all options in this question
     const question = document.querySelector(`[data-q="${questionNum}"]`);
     question.querySelectorAll('.option-card').forEach(card => {
         card.classList.remove('selected');
     });
 
-    // Add selection to clicked option
     event.target.closest('.option-card').classList.add('selected');
-
-    // Save answer
     state.quizAnswers[`q${questionNum}`] = value;
-
-    // Enable next button
     document.getElementById(`next-${questionNum}`).disabled = false;
 }
 
 function nextQuestion(currentQ) {
-    // Hide current question
     document.querySelector(`[data-q="${currentQ}"]`).classList.remove('active');
-
-    // Show next question
-    const nextQ = currentQ + 1;
-    document.querySelector(`[data-q="${nextQ}"]`).classList.add('active');
-
-    // Update progress bar
-    updateProgressBar(nextQ);
-
-    // Scroll to top
-    document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelector(`[data-q="${currentQ + 1}"]`).classList.add('active');
+    updateProgressBar(currentQ + 1);
+    scrollToTabSection();
 }
 
 function prevQuestion(currentQ) {
-    // Hide current question
     document.querySelector(`[data-q="${currentQ}"]`).classList.remove('active');
-
-    // Show previous question
-    const prevQ = currentQ - 1;
-    document.querySelector(`[data-q="${prevQ}"]`).classList.add('active');
-
-    // Update progress bar
-    updateProgressBar(prevQ);
-
-    // Scroll to top
-    document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelector(`[data-q="${currentQ - 1}"]`).classList.add('active');
+    updateProgressBar(currentQ - 1);
+    scrollToTabSection();
 }
 
 function updateProgressBar(questionNum) {
@@ -118,45 +174,47 @@ function updateProgressBar(questionNum) {
     document.getElementById('progress-bar').style.width = `${progress}%`;
 }
 
+function scrollToTabSection() {
+    document.querySelector('.tab-section').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
+}
+
 async function showResults() {
-    // Hide last question
     document.querySelector('[data-q="4"]').classList.remove('active');
 
-    // Get recommendations from API or use fallback
-    const recommendations = await getRecommendations();
-
-    // Display results
-    displayResults(recommendations);
-
-    // Show results container
+    // Show loading
+    const resultsGrid = document.getElementById('results-grid');
+    resultsGrid.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cerco i regali perfetti...</p></div>';
     document.getElementById('quiz-results').classList.add('show');
 
-    // Progress bar to 100%
-    document.getElementById('progress-bar').style.width = '100%';
+    try {
+        const recommendations = await getRecommendations();
+        displayResults(recommendations);
+    } catch (error) {
+        console.error('Error getting recommendations:', error);
+        resultsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Errore nel caricamento. Riprova.</p>';
+    }
 
-    // Scroll to results
-    setTimeout(() => {
-        document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    document.getElementById('progress-bar').style.width = '100%';
+    scrollToTabSection();
 }
 
 async function getRecommendations() {
     try {
-        // Try to get from API
-        const response = await fetch(`${CONFIG.API_URL}/gift-recommendations`, {
+        const response = await fetchWithRetry(`${CONFIG.API_URL}/gift-recommendations`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(state.quizAnswers)
+            body: JSON.stringify(state.quizAnswers),
         });
 
         if (response.ok) {
             return await response.json();
         }
     } catch (error) {
-        console.log('Using fallback recommendations');
+        console.log('Using fallback recommendations:', error);
     }
 
-    // Fallback: use local database
     return getFallbackRecommendations();
 }
 
@@ -187,165 +245,11 @@ function getFallbackRecommendations() {
                 { name: 'Smartphone Flagship', price: '€799,99', emoji: '📱' }
             ]
         },
-        sport: {
-            economico: [
-                { name: 'Borraccia Termica 750ml', price: '€19,99', emoji: '💧' },
-                { name: 'Tappetino Yoga Premium', price: '€24,99', emoji: '🧘' },
-                { name: 'Fascia Elastica Fitness', price: '€15,99', emoji: '💪' }
-            ],
-            medio: [
-                { name: 'Orologio GPS Running', price: '€79,99', emoji: '⌚' },
-                { name: 'Set Manubri Regolabili', price: '€89,99', emoji: '🏋️' },
-                { name: 'Zaino Trekking 40L', price: '€69,99', emoji: '🎒' }
-            ],
-            alto: [
-                { name: 'Cyclette Smart Pieghevole', price: '€249,99', emoji: '🚴' },
-                { name: 'Smartwatch Sport Premium', price: '€199,99', emoji: '⌚' },
-                { name: 'Action Camera 4K Pro', price: '€179,99', emoji: '📹' }
-            ],
-            lusso: [
-                { name: 'Bicicletta Elettrica', price: '€1299,99', emoji: '🚲' },
-                { name: 'Tapis Roulant Professionale', price: '€899,99', emoji: '🏃' },
-                { name: 'Home Gym Completa', price: '€1499,99', emoji: '💪' }
-            ]
-        },
-        moda: {
-            economico: [
-                { name: 'Sciarpa Cashmere', price: '€29,99', emoji: '🧣' },
-                { name: 'Orologio Minimal Design', price: '€24,99', emoji: '⌚' },
-                { name: 'Set Gioielli Eleganti', price: '€19,99', emoji: '💍' }
-            ],
-            medio: [
-                { name: 'Borsa Pelle Tracolla', price: '€89,99', emoji: '👜' },
-                { name: 'Occhiali da Sole Polarizzati', price: '€59,99', emoji: '🕶️' },
-                { name: 'Portafoglio Pelle Genuina', price: '€49,99', emoji: '👛' }
-            ],
-            alto: [
-                { name: 'Zaino Fashion Premium', price: '€159,99', emoji: '🎒' },
-                { name: 'Orologio Automatico', price: '€249,99', emoji: '⌚' },
-                { name: 'Cintura Pelle Designer', price: '€129,99', emoji: '⭕' }
-            ],
-            lusso: [
-                { name: 'Borsetta Designer Limited', price: '€499,99', emoji: '👜' },
-                { name: 'Orologio Svizzero', price: '€899,99', emoji: '⌚' },
-                { name: 'Giacca Pelle Premium', price: '€699,99', emoji: '🧥' }
-            ]
-        },
-        cucina: {
-            economico: [
-                { name: 'Set Coltelli Professionali', price: '€29,99', emoji: '🔪' },
-                { name: 'Bilancia Digitale Cucina', price: '€19,99', emoji: '⚖️' },
-                { name: 'Libro Ricette Bestseller', price: '€24,99', emoji: '📕' }
-            ],
-            medio: [
-                { name: 'Frullatore 1000W', price: '€69,99', emoji: '🥤' },
-                { name: 'Set Pentole Antiaderenti', price: '€89,99', emoji: '🍳' },
-                { name: 'Macchina Caffè Espresso', price: '€79,99', emoji: '☕' }
-            ],
-            alto: [
-                { name: 'Robot da Cucina Pro', price: '€199,99', emoji: '🤖' },
-                { name: 'Macchina Sottovuoto', price: '€149,99', emoji: '📦' },
-                { name: 'Estrattore Slow Juicer', price: '€179,99', emoji: '🥤' }
-            ],
-            lusso: [
-                { name: 'Planetaria 6L Professional', price: '€499,99', emoji: '🎂' },
-                { name: 'Macchina Caffè Automatica', price: '€899,99', emoji: '☕' },
-                { name: 'Forno Smart Multifunzione', price: '€699,99', emoji: '🔥' }
-            ]
-        },
-        gaming: {
-            economico: [
-                { name: 'Controller Wireless Pro', price: '€29,99', emoji: '🎮' },
-                { name: 'Mousepad Gaming XXL', price: '€19,99', emoji: '🖱️' },
-                { name: 'Cuffie Gaming RGB', price: '€24,99', emoji: '🎧' }
-            ],
-            medio: [
-                { name: 'Mouse Gaming 16000 DPI', price: '€59,99', emoji: '🖱️' },
-                { name: 'Tastiera Meccanica RGB', price: '€89,99', emoji: '⌨️' },
-                { name: 'Webcam Streaming HD', price: '€69,99', emoji: '📹' }
-            ],
-            alto: [
-                { name: 'Sedia Gaming Ergonomica', price: '€249,99', emoji: '🪑' },
-                { name: 'Monitor Gaming 27" 144Hz', price: '€299,99', emoji: '🖥️' },
-                { name: 'Console Portatile Premium', price: '€199,99', emoji: '🎮' }
-            ],
-            lusso: [
-                { name: 'PC Gaming RTX 4070', price: '€1499,99', emoji: '💻' },
-                { name: 'Setup Gaming RGB Completo', price: '€999,99', emoji: '🎮' },
-                { name: 'Simulator Racing Pro', price: '€1299,99', emoji: '🏎️' }
-            ]
-        },
-        libri: {
-            economico: [
-                { name: 'Bestseller del Momento', price: '€14,99', emoji: '📚' },
-                { name: 'Lampada Lettura LED', price: '€19,99', emoji: '💡' },
-                { name: 'Set Segnalibri Premium', price: '€12,99', emoji: '🔖' }
-            ],
-            medio: [
-                { name: 'E-Reader 6" Touchscreen', price: '€79,99', emoji: '📖' },
-                { name: 'Lampada Scrivania Smart', price: '€49,99', emoji: '🕯️' },
-                { name: 'Libreria Modulare Design', price: '€89,99', emoji: '📚' }
-            ],
-            alto: [
-                { name: 'E-Reader 7" Waterproof', price: '€199,99', emoji: '📱' },
-                { name: 'Poltrona Lettura Ergonomica', price: '€249,99', emoji: '🪑' },
-                { name: 'Collezione Libri Classici', price: '€149,99', emoji: '📚' }
-            ],
-            lusso: [
-                { name: 'Tablet Pro 12" + Abbonamento', price: '€699,99', emoji: '📲' },
-                { name: 'Libreria Design Illuminata', price: '€899,99', emoji: '📚' },
-                { name: 'Poltrona Massaggiante', price: '€1299,99', emoji: '🛋️' }
-            ]
-        },
-        musica: {
-            economico: [
-                { name: 'Cuffie Bluetooth Sport', price: '€24,99', emoji: '🎧' },
-                { name: 'Speaker Bluetooth Mini', price: '€19,99', emoji: '🔊' },
-                { name: 'Supporto Spartiti', price: '€14,99', emoji: '🎼' }
-            ],
-            medio: [
-                { name: 'Cuffie Studio Monitor', price: '€89,99', emoji: '🎧' },
-                { name: 'Speaker Bluetooth 360°', price: '€69,99', emoji: '🔊' },
-                { name: 'Microfono USB Podcast', price: '€79,99', emoji: '🎙️' }
-            ],
-            alto: [
-                { name: 'Cuffie Wireless ANC', price: '€249,99', emoji: '🎧' },
-                { name: 'Giradischi Vinili Bluetooth', price: '€199,99', emoji: '💿' },
-                { name: 'Soundbar 5.1 Dolby', price: '€299,99', emoji: '🔊' }
-            ],
-            lusso: [
-                { name: 'Home Theater 7.1', price: '€999,99', emoji: '🎵' },
-                { name: 'Cuffie Audiophile HiFi', price: '€699,99', emoji: '🎧' },
-                { name: 'Sistema Audio Multiroom', price: '€1299,99', emoji: '🔊' }
-            ]
-        },
-        viaggi: {
-            economico: [
-                { name: 'Organizer Valigia 6pz', price: '€19,99', emoji: '🧳' },
-                { name: 'Power Bank Travel', price: '€24,99', emoji: '🔋' },
-                { name: 'Adattatore Universale', price: '€15,99', emoji: '🔌' }
-            ],
-            medio: [
-                { name: 'Zaino Antifurto USB', price: '€49,99', emoji: '🎒' },
-                { name: 'Borsa Viaggio 40L', price: '€39,99', emoji: '💼' },
-                { name: 'Cuscino Viaggio Memory', price: '€29,99', emoji: '😴' }
-            ],
-            alto: [
-                { name: 'Valigia Trolley 4 Ruote', price: '€149,99', emoji: '🧳' },
-                { name: 'Drone 4K Pieghevole', price: '€249,99', emoji: '🚁' },
-                { name: 'Action Camera Kit', price: '€179,99', emoji: '📹' }
-            ],
-            lusso: [
-                { name: 'Set Valigie Premium 3pz', price: '€499,99', emoji: '🧳' },
-                { name: 'Drone Professionale GPS', price: '€899,99', emoji: '🚁' },
-                { name: 'Zaino Viaggio Smart 50L', price: '€349,99', emoji: '🎒' }
-            ]
-        }
+        // ... altri database
     };
 
     const products = giftDB[interest]?.[budget] || giftDB.tecnologia.medio;
     
-    // Add search query for Amazon
     return products.map(product => ({
         ...product,
         searchQuery: `${product.name} amazon`
@@ -360,14 +264,18 @@ function displayResults(recommendations) {
         const card = document.createElement('div');
         card.className = 'result-card';
         
-        const amazonUrl = `https://www.amazon.it/s?k=${encodeURIComponent(product.searchQuery || product.name)}&tag=${CONFIG.AMAZON_AFFILIATE_ID}`;
+        const amazonUrl = generateAmazonUrl(product.searchQuery || product.name);
         
         card.innerHTML = `
             <div class="result-image">${product.emoji}</div>
             <div class="result-info">
-                <div class="result-title">${product.name}</div>
-                <div class="result-price">${product.price}</div>
-                <a href="${amazonUrl}" target="_blank" class="result-btn" onclick="trackGiftClick('${product.name}')">
+                <div class="result-title">${sanitizeInput(product.name)}</div>
+                <div class="result-price">${sanitizeInput(product.price)}</div>
+                <a href="${amazonUrl}" 
+                   target="_blank" 
+                   rel="noopener noreferrer nofollow"
+                   class="result-btn" 
+                   onclick="trackGiftClick('${sanitizeInput(product.name)}')">
                     Vedi su Amazon →
                 </a>
             </div>
@@ -378,50 +286,35 @@ function displayResults(recommendations) {
 }
 
 function restartQuiz() {
-    // Reset state
     state.quizAnswers = {};
-
-    // Hide results
     document.getElementById('quiz-results').classList.remove('show');
-
-    // Reset all selections
+    
     document.querySelectorAll('.option-card').forEach(card => {
         card.classList.remove('selected');
     });
-
-    // Disable all next buttons
+    
     for (let i = 1; i <= 4; i++) {
         document.getElementById(`next-${i}`).disabled = true;
     }
-
-    // Hide all questions
+    
     document.querySelectorAll('.quiz-question').forEach(q => {
         q.classList.remove('active');
     });
-
-    // Show first question
+    
     document.querySelector('[data-q="1"]').classList.add('active');
-
-    // Reset progress bar
     document.getElementById('progress-bar').style.width = '0%';
-
-    // Scroll to top
-    document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToTabSection();
 }
 
 function trackGiftClick(productName) {
-    // Send analytics
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'gift_click', {
-            product_name: productName,
-            quiz_answers: JSON.stringify(state.quizAnswers)
-        });
-    }
+    trackEvent('gift_click', {
+        product_name: productName,
+        quiz_answers: state.quizAnswers
+    });
 
-    // Send to API
-    fetch(`${CONFIG.API_URL}/api/track/gift-click`, {
+    // Send to API (non-blocking)
+    fetchWithRetry(`${CONFIG.API_URL}/api/track/gift-click`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             product: productName,
             answers: state.quizAnswers
@@ -434,6 +327,15 @@ function trackGiftClick(productName) {
 // ============================================
 
 async function fetchOffers(category = 'all') {
+    const cacheKey = `offers_${category}`;
+    const cached = getCachedData(cacheKey);
+    
+    if (cached) {
+        displayOffers(cached);
+        updateStats(cached.length);
+        return;
+    }
+
     try {
         const params = new URLSearchParams({
             limit: 50,
@@ -444,18 +346,15 @@ async function fetchOffers(category = 'all') {
             params.append('category', category);
         }
 
-        const response = await fetch(`${CONFIG.API_URL}/api/offers?${params}`);
+        const response = await fetchWithRetry(`${CONFIG.API_URL}/api/offers?${params}`);
         const offers = await response.json();
 
+        setCachedData(cacheKey, offers);
         displayOffers(offers);
         updateStats(offers.length);
     } catch (error) {
         console.error('Error fetching offers:', error);
-        document.getElementById('offers-container').innerHTML = `
-            <div class="loading">
-                <p>Errore nel caricamento delle offerte. Riprova più tardi.</p>
-            </div>
-        `;
+        showErrorState();
     }
 }
 
@@ -506,11 +405,15 @@ function createOfferCard(offer) {
 
     card.innerHTML = `
         ${discountBadge}
-        <img src="${imageUrl}" alt="${offer.product_name}" class="offer-image" onerror="this.src='https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image'">
+        <img src="${imageUrl}" 
+             alt="${sanitizeInput(offer.product_name)}" 
+             class="offer-image" 
+             loading="lazy"
+             onerror="this.src='https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image'">
         <div class="offer-content">
-            ${offer.category ? `<div class="offer-category">${offer.category}</div>` : ''}
-            <h3 class="offer-title">${offer.product_name}</h3>
-            ${offer.description ? `<p class="offer-description">${offer.description}</p>` : ''}
+            ${offer.category ? `<div class="offer-category">${sanitizeInput(offer.category)}</div>` : ''}
+            <h3 class="offer-title">${sanitizeInput(offer.product_name)}</h3>
+            ${offer.description ? `<p class="offer-description">${sanitizeInput(offer.description)}</p>` : ''}
             ${priceHTML}
             <a href="${offer.affiliate_link}" 
                target="_blank" 
@@ -527,9 +430,10 @@ function createOfferCard(offer) {
 
 async function trackClick(offerId) {
     try {
-        await fetch(`${CONFIG.API_URL}/api/offers/${offerId}/click`, {
+        await fetchWithRetry(`${CONFIG.API_URL}/api/offers/${offerId}/click`, {
             method: 'POST'
         });
+        trackEvent('offer_click', { offer_id: offerId });
     } catch (error) {
         console.error('Error tracking click:', error);
     }
@@ -540,6 +444,14 @@ function updateStats(count) {
     if (statsEl) {
         statsEl.textContent = count;
     }
+}
+
+function showErrorState() {
+    document.getElementById('offers-container').innerHTML = `
+        <div class="loading">
+            <p>❌ Errore nel caricamento. <button onclick="fetchOffers('${state.currentCategory}')" style="color: var(--accent); text-decoration: underline; background: none; border: none; cursor: pointer;">Riprova</button></p>
+        </div>
+    `;
 }
 
 // ============================================
@@ -557,6 +469,16 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchOffers(category);
         });
     });
+
+    // Search on Enter
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchAmazon();
+            }
+        });
+    }
 });
 
 // ============================================
@@ -566,25 +488,74 @@ document.addEventListener('DOMContentLoaded', () => {
 async function subscribeNewsletter(event) {
     event.preventDefault();
     
-    const email = event.target.querySelector('input[type="email"]').value;
+    const form = event.target;
+    const emailInput = form.querySelector('input[type="email"]');
+    const email = emailInput.value.trim();
+    const button = form.querySelector('button');
+    
+    // Disable button durante submit
+    button.disabled = true;
+    button.textContent = 'Invio...';
     
     try {
-        const response = await fetch(`${CONFIG.API_URL}/api/newsletter/subscribe`, {
+        const response = await fetchWithRetry(`${CONFIG.API_URL}/api/newsletter/subscribe`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
 
         if (response.ok) {
-            alert('✅ Iscrizione completata! Controlla la tua email.');
-            event.target.reset();
+            showNotification('✅ Iscrizione completata! Controlla la tua email.', 'success');
+            form.reset();
+            trackEvent('newsletter_subscribe', { email_domain: email.split('@')[1] });
         } else {
             throw new Error('Subscription failed');
         }
     } catch (error) {
         console.error('Newsletter error:', error);
-        alert('❌ Errore nell\'iscrizione. Riprova più tardi.');
+        showNotification('❌ Errore nell\'iscrizione. Riprova più tardi.', 'error');
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Iscriviti';
     }
+}
+
+// ============================================
+// NOTIFICATIONS & ANALYTICS
+// ============================================
+
+function showNotification(message, type = 'info') {
+    // Crea notifica toast
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function trackEvent(eventName, eventData = {}) {
+    // Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, eventData);
+    }
+    
+    // Console log per debug
+    console.log('Event tracked:', eventName, eventData);
 }
 
 // ============================================
@@ -595,6 +566,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load offers
     fetchOffers();
 
-    // Refresh every 5 minutes
-    setInterval(() => fetchOffers(state.currentCategory), 5 * 60 * 1000);
+    // Refresh ogni 5 minuti
+    setInterval(() => {
+        // Clear cache prima del refresh
+        state.requestCache.clear();
+        fetchOffers(state.currentCategory);
+    }, 5 * 60 * 1000);
+
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
 });
+
+// Service Worker registration (opzionale, per PWA)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration failed:', err);
+        });
+    });
+}

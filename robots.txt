@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://https://trovailregaloperfetto.pages.dev/sitemap.xml
+
+# Security
+User-agent: *
+Disallow: /admin/
+Disallow: /api/internal/
+
+# Amazon affiliate disclosure
+# This site participates in the Amazon Services LLC Associates Program

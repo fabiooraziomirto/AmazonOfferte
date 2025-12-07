@@ -1,6 +1,6 @@
 // Configuration
 const CONFIG = {
-    API_URL: 'https://amazon-affiliate-api.fabmi1234.workers.dev',
+    API_URL: 'https://gift-finder-api.fabmi1234.workers.dev',
     AMAZON_AFFILIATE_ID: 'fabmi123402-21',
     TELEGRAM_URL: 'https://t.me/amazondeal_me',
     // Timeout per richieste API

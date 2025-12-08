@@ -596,3 +596,326 @@ if ('serviceWorker' in navigator) {
         });
     });
 }
+
+// ============================================
+// WISHLIST MANAGEMENT
+// ============================================
+
+const wishlist = {
+    STORAGE_KEY: 'deal_hunter_wishlist',
+
+    // Get all items from wishlist
+    getAll() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        } catch (e) {
+            console.error('Error reading wishlist:', e);
+            return [];
+        }
+    },
+
+    // Save wishlist to localStorage
+    save(items) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
+            this.updateCount();
+        } catch (e) {
+            console.error('Error saving wishlist:', e);
+        }
+    },
+
+    // Add item to wishlist
+    add(item) {
+        const items = this.getAll();
+        const exists = items.find(i => i.id === item.id);
+
+        if (!exists) {
+            items.push({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                image: item.image,
+                link: item.link,
+                addedAt: new Date().toISOString()
+            });
+            this.save(items);
+            showNotification('❤️ Aggiunto alla wishlist!', 'success');
+            trackEvent('wishlist_add', { product_id: item.id });
+        }
+    },
+
+    // Remove item from wishlist
+    remove(itemId) {
+        const items = this.getAll();
+        const filtered = items.filter(i => i.id !== itemId);
+        this.save(filtered);
+        showNotification('🗑️ Rimosso dalla wishlist', 'info');
+        trackEvent('wishlist_remove', { product_id: itemId });
+        this.render();
+    },
+
+    // Check if item is in wishlist
+    has(itemId) {
+        return this.getAll().some(i => i.id === itemId);
+    },
+
+    // Update wishlist count in header
+    updateCount() {
+        const count = this.getAll().length;
+        const counter = document.getElementById('wishlist-count');
+        if (counter) {
+            counter.textContent = count;
+        }
+    },
+
+    // Render wishlist modal
+    render() {
+        const container = document.getElementById('wishlist-items');
+        const items = this.getAll();
+
+        if (items.length === 0) {
+            container.innerHTML = `
+                <div class="wishlist-empty">
+                    <p>😢 La tua wishlist è vuota</p>
+                    <p class="wishlist-empty-sub">Inizia ad aggiungere le tue offerte preferite!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = items.map(item => `
+            <div class="wishlist-item">
+                <img src="${item.image}" alt="${sanitizeInput(item.name)}" class="wishlist-item-image" onerror="this.src='https://via.placeholder.com/100/1a1f28/ff6b35?text=No+Image'">
+                <div class="wishlist-item-info">
+                    <div class="wishlist-item-title">${sanitizeInput(item.name)}</div>
+                    <div class="wishlist-item-price">${item.price}</div>
+                    <div class="wishlist-item-actions">
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="wishlist-item-btn wishlist-item-btn-view">
+                            Vedi su Amazon →
+                        </a>
+                        <button class="wishlist-item-btn wishlist-item-btn-remove" onclick="wishlist.remove('${item.id}')">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+};
+
+// Toggle wishlist modal
+function toggleWishlistModal() {
+    const modal = document.getElementById('wishlist-modal');
+    if (modal) {
+        const isShowing = modal.classList.contains('show');
+        if (isShowing) {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        } else {
+            wishlist.render();
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+    }
+}
+
+// Toggle wishlist item (from heart button on card)
+function toggleWishlistItem(offerId, offerData) {
+    if (wishlist.has(offerId)) {
+        wishlist.remove(offerId);
+        updateHeartButton(offerId, false);
+    } else {
+        wishlist.add(offerData);
+        updateHeartButton(offerId, true);
+    }
+}
+
+// Update heart button visual state
+function updateHeartButton(offerId, isInWishlist) {
+    const button = document.querySelector(`[data-wishlist-id="${offerId}"]`);
+    if (button) {
+        if (isInWishlist) {
+            button.classList.add('active');
+            button.innerHTML = '❤️';
+        } else {
+            button.classList.remove('active');
+            button.innerHTML = '🤍';
+        }
+    }
+}
+
+// ============================================
+// ADVANCED FILTERS
+// ============================================
+
+const filters = {
+    price: 'all',
+    discount: 0,
+    sort: 'newest'
+};
+
+// Apply filters to offers
+function applyFilters(offers) {
+    let filtered = [...offers];
+
+    // Filter by price range
+    if (filters.price !== 'all') {
+        filtered = filtered.filter(offer => {
+            const price = offer.discounted_price || offer.original_price || 0;
+
+            if (filters.price === '0-20') return price <= 20;
+            if (filters.price === '20-50') return price > 20 && price <= 50;
+            if (filters.price === '50-100') return price > 50 && price <= 100;
+            if (filters.price === '100-200') return price > 100 && price <= 200;
+            if (filters.price === '200+') return price > 200;
+
+            return true;
+        });
+    }
+
+    // Filter by minimum discount
+    if (filters.discount > 0) {
+        filtered = filtered.filter(offer => {
+            return (offer.discount_percentage || 0) >= filters.discount;
+        });
+    }
+
+    // Sort offers
+    filtered = sortOffers(filtered, filters.sort);
+
+    return filtered;
+}
+
+// Sort offers by criteria
+function sortOffers(offers, sortBy) {
+    const sorted = [...offers];
+
+    switch(sortBy) {
+        case 'newest':
+            // Assume offers are already sorted by newest
+            break;
+
+        case 'discount':
+            sorted.sort((a, b) => {
+                const discountA = a.discount_percentage || 0;
+                const discountB = b.discount_percentage || 0;
+                return discountB - discountA;
+            });
+            break;
+
+        case 'price-asc':
+            sorted.sort((a, b) => {
+                const priceA = a.discounted_price || a.original_price || 0;
+                const priceB = b.discounted_price || b.original_price || 0;
+                return priceA - priceB;
+            });
+            break;
+
+        case 'price-desc':
+            sorted.sort((a, b) => {
+                const priceA = a.discounted_price || a.original_price || 0;
+                const priceB = b.discounted_price || b.original_price || 0;
+                return priceB - priceA;
+            });
+            break;
+    }
+
+    return sorted;
+}
+
+// Reset all filters
+function resetFilters() {
+    filters.price = 'all';
+    filters.discount = 0;
+    filters.sort = 'newest';
+
+    document.getElementById('price-filter').value = 'all';
+    document.getElementById('discount-filter').value = '0';
+    document.getElementById('sort-filter').value = 'newest';
+
+    fetchOffers(state.currentCategory);
+}
+
+// ============================================
+// ENHANCED OFFER DISPLAY
+// ============================================
+
+// Override createOfferCard to add wishlist button
+const originalCreateOfferCard = createOfferCard;
+function createOfferCard(offer) {
+    const card = originalCreateOfferCard(offer);
+
+    // Add wishlist heart button
+    const heartBtn = document.createElement('button');
+    heartBtn.className = 'wishlist-heart-btn';
+    heartBtn.setAttribute('data-wishlist-id', offer.id);
+    heartBtn.setAttribute('aria-label', 'Aggiungi alla wishlist');
+    heartBtn.innerHTML = wishlist.has(offer.id) ? '❤️' : '🤍';
+    if (wishlist.has(offer.id)) {
+        heartBtn.classList.add('active');
+    }
+
+    heartBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleWishlistItem(offer.id, {
+            id: offer.id,
+            name: offer.product_name,
+            price: offer.discounted_price ? `€${offer.discounted_price.toFixed(2)}` : 'N/A',
+            image: offer.image_url || 'https://via.placeholder.com/100',
+            link: offer.affiliate_link
+        });
+    };
+
+    card.insertBefore(heartBtn, card.firstChild);
+
+    return card;
+}
+
+// Override displayOffers to apply filters
+const originalDisplayOffers = displayOffers;
+function displayOffers(offers) {
+    const filtered = applyFilters(offers);
+    originalDisplayOffers(filtered);
+}
+
+// ============================================
+// INITIALIZATION WITH NEW FEATURES
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize wishlist count
+    wishlist.updateCount();
+
+    // Advanced filters event listeners
+    document.getElementById('price-filter')?.addEventListener('change', (e) => {
+        filters.price = e.target.value;
+        fetchOffers(state.currentCategory);
+        trackEvent('filter_change', { type: 'price', value: e.target.value });
+    });
+
+    document.getElementById('discount-filter')?.addEventListener('change', (e) => {
+        filters.discount = parseInt(e.target.value);
+        fetchOffers(state.currentCategory);
+        trackEvent('filter_change', { type: 'discount', value: e.target.value });
+    });
+
+    document.getElementById('sort-filter')?.addEventListener('change', (e) => {
+        filters.sort = e.target.value;
+        fetchOffers(state.currentCategory);
+        trackEvent('filter_change', { type: 'sort', value: e.target.value });
+    });
+
+    document.getElementById('reset-filters')?.addEventListener('click', resetFilters);
+
+    // Close wishlist modal with ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('wishlist-modal');
+            if (modal && modal.classList.contains('show')) {
+                toggleWishlistModal();
+            }
+        }
+    });
+});

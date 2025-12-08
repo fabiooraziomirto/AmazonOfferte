@@ -21,4 +21,12 @@
     <priority>0.3</priority>
   </url>
 
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://trovailregaloperfetto.pages.dev/terms.html</loc>
+    <lastmod>2024-12-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>

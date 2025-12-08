@@ -552,15 +552,33 @@
 
         /* Filter bar */
         .filter-bar {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
             margin-bottom: 4rem;
             padding: 2rem;
             background: var(--bg-secondary);
             border-radius: 24px;
             border: 1px solid var(--border);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-label {
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
         }
 
         .filter-btn {
@@ -586,6 +604,63 @@
             border-color: var(--accent);
             color: white;
             box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        /* Advanced Filters */
+        .advanced-filters {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-control {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .filter-select:hover,
+        .filter-select:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .filter-select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .filter-btn-reset {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn-reset:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
         }
 
         /* Grid */
@@ -903,10 +978,262 @@
             font-size: 0.95rem;
         }
 
+        /* Wishlist Header Button */
+        .wishlist-header-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wishlist-header-btn:hover {
+            border-color: #e91e63;
+            transform: translateY(-2px);
+        }
+
+        #wishlist-count {
+            color: #e91e63;
+            font-weight: 700;
+        }
+
+        /* Wishlist Modal */
+        .wishlist-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wishlist-modal.show {
+            display: flex;
+        }
+
+        .wishlist-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .wishlist-content {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: scaleIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .wishlist-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wishlist-header h2 {
+            font-size: 1.75rem;
+            margin: 0;
+        }
+
+        .wishlist-close {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wishlist-close:hover {
+            border-color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        .wishlist-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .wishlist-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .wishlist-empty p {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .wishlist-empty-sub {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .wishlist-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .wishlist-item:hover {
+            border-color: var(--accent);
+        }
+
+        .wishlist-item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+        }
+
+        .wishlist-item-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .wishlist-item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .wishlist-item-price {
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .wishlist-item-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+        }
+
+        .wishlist-item-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .wishlist-item-btn-view {
+            background: var(--accent);
+            color: white;
+            flex: 1;
+        }
+
+        .wishlist-item-btn-view:hover {
+            background: #e55a2b;
+        }
+
+        .wishlist-item-btn-remove {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .wishlist-item-btn-remove:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Wishlist Heart Button on Cards */
+        .wishlist-heart-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .wishlist-heart-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .wishlist-heart-btn.active {
+            background: #e91e63;
+            border-color: #e91e63;
+            animation: heartBeat 0.5s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-stats {
                 display: none;
+            }
+
+            .wishlist-item {
+                flex-direction: column;
+            }
+
+            .wishlist-item-image {
+                width: 100%;
+                height: 200px;
             }
 
             .hero h1 {
@@ -972,6 +1299,120 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
+        }
+
+        /* Cookie Banner */
+        #cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--accent);
+            padding: 1.5rem;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            animation: slideUp 0.4s ease;
+            display: none;
+        }
+
+        #cookie-banner.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .cookie-text h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .cookie-text p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .cookie-text a {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .cookie-btn-accept {
+            background: var(--accent);
+            color: white;
+        }
+
+        .cookie-btn-accept:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+
+        .cookie-btn-reject {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .cookie-btn-reject:hover {
+            border-color: var(--accent);
+        }
+
+        .cookie-btn-settings {
+            background: transparent;
+            color: var(--text-secondary);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .cookie-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cookie-buttons {
+                flex-direction: column;
+            }
+
+            .cookie-btn {
+                width: 100%;
+            }
         }
     </style>
     <meta http-equiv="Content-Security-Policy" 
@@ -1137,6 +1578,9 @@
                     <div class="stat">
                         Risparmiati: <span class="stat-value">€50K+</span>
                     </div>
+                    <button class="wishlist-header-btn" onclick="toggleWishlistModal()" aria-label="Apri wishlist">
+                        ❤️ <span id="wishlist-count">0</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1367,14 +1811,63 @@
         <!-- Filter Bar -->
         <section class="filter-bar" aria-label="Filtri per categoria">
             <h2 class="sr-only">Filtra offerte per categoria</h2>
-            <button class="filter-btn active" data-category="all">Tutte</button>
-            <button class="filter-btn" data-category="elettronica">📱 Elettronica</button>
-            <button class="filter-btn" data-category="casa">🏠 Casa</button>
-            <button class="filter-btn" data-category="moda">👗 Moda</button>
-            <button class="filter-btn" data-category="sport">⚽ Sport</button>
-            <button class="filter-btn" data-category="giochi">🎮 Giochi</button>
-            <button class="filter-btn" data-category="cucina">🍳 Cucina</button>
-            <button class="filter-btn" data-category="bellezza">💄 Bellezza</button>
+
+            <!-- Category Filters -->
+            <div class="filter-group">
+                <span class="filter-label">Categoria:</span>
+                <button class="filter-btn active" data-category="all">Tutte</button>
+                <button class="filter-btn" data-category="elettronica">📱 Elettronica</button>
+                <button class="filter-btn" data-category="casa">🏠 Casa</button>
+                <button class="filter-btn" data-category="moda">👗 Moda</button>
+                <button class="filter-btn" data-category="sport">⚽ Sport</button>
+                <button class="filter-btn" data-category="giochi">🎮 Giochi</button>
+                <button class="filter-btn" data-category="cucina">🍳 Cucina</button>
+                <button class="filter-btn" data-category="bellezza">💄 Bellezza</button>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="advanced-filters">
+                <!-- Price Range -->
+                <div class="filter-control">
+                    <label for="price-filter" class="filter-label">💰 Prezzo:</label>
+                    <select id="price-filter" class="filter-select">
+                        <option value="all">Tutti i prezzi</option>
+                        <option value="0-20">€0 - €20</option>
+                        <option value="20-50">€20 - €50</option>
+                        <option value="50-100">€50 - €100</option>
+                        <option value="100-200">€100 - €200</option>
+                        <option value="200+">€200+</option>
+                    </select>
+                </div>
+
+                <!-- Discount Filter -->
+                <div class="filter-control">
+                    <label for="discount-filter" class="filter-label">🔥 Sconto minimo:</label>
+                    <select id="discount-filter" class="filter-select">
+                        <option value="0">Tutti</option>
+                        <option value="20">Min 20%</option>
+                        <option value="30">Min 30%</option>
+                        <option value="50">Min 50%</option>
+                        <option value="70">Min 70%</option>
+                    </select>
+                </div>
+
+                <!-- Sort By -->
+                <div class="filter-control">
+                    <label for="sort-filter" class="filter-label">⚡ Ordina:</label>
+                    <select id="sort-filter" class="filter-select">
+                        <option value="newest">Più recenti</option>
+                        <option value="discount">Sconto più alto</option>
+                        <option value="price-asc">Prezzo: basso → alto</option>
+                        <option value="price-desc">Prezzo: alto → basso</option>
+                    </select>
+                </div>
+
+                <!-- Reset Filters -->
+                <button id="reset-filters" class="filter-btn-reset" aria-label="Azzera filtri">
+                    🔄 Azzera
+                </button>
+            </div>
         </section>
 
         <!-- Offers Grid -->
@@ -1408,19 +1901,127 @@
         </a>
     </div>
 
+    <!-- Wishlist Modal -->
+    <div id="wishlist-modal" class="wishlist-modal" role="dialog" aria-labelledby="wishlist-title" aria-hidden="true">
+        <div class="wishlist-overlay" onclick="toggleWishlistModal()"></div>
+        <div class="wishlist-content">
+            <div class="wishlist-header">
+                <h2 id="wishlist-title">❤️ La Tua Wishlist</h2>
+                <button class="wishlist-close" onclick="toggleWishlistModal()" aria-label="Chiudi wishlist">✕</button>
+            </div>
+            <div class="wishlist-body" id="wishlist-items">
+                <div class="wishlist-empty">
+                    <p>😢 La tua wishlist è vuota</p>
+                    <p class="wishlist-empty-sub">Inizia ad aggiungere le tue offerte preferite!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <p>&copy; 2024 Deal Hunter. Tutti i diritti riservati.</p>
             <p class="footer-disclaimer">
                 Questo sito contiene link affiliati Amazon. Potremmo ricevere una commissione per gli acquisti effettuati tramite questi link.
             </p>
-            <p class="footer-disclaimer"> 
+            <p class="footer-disclaimer">
                 Amazon e il logo Amazon sono marchi commerciali di Amazon.com, Inc. o delle sue affiliate.
             </p>
         </div>
     </footer>
 
+    <!-- Cookie Banner GDPR -->
+    <div id="cookie-banner" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-desc">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <h3 id="cookie-title">🍪 Utilizzo dei Cookie</h3>
+                <p id="cookie-desc">
+                    Utilizziamo cookie tecnici necessari per il funzionamento del sito e cookie di terze parti (Amazon, Google Analytics)
+                    per migliorare la tua esperienza. Continuando la navigazione accetti il loro utilizzo.
+                    <a href="/privacy.html">Maggiori informazioni</a>
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">
+                    ✓ Accetta Tutti
+                </button>
+                <button class="cookie-btn cookie-btn-reject" onclick="rejectCookies()">
+                    Solo Necessari
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/main.js"></script>
+    <script>
+        // Cookie Banner Management
+        (function() {
+            const COOKIE_CONSENT_KEY = 'cookie_consent';
+            const banner = document.getElementById('cookie-banner');
+
+            function getCookieConsent() {
+                try {
+                    return localStorage.getItem(COOKIE_CONSENT_KEY);
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function setCookieConsent(value) {
+                try {
+                    localStorage.setItem(COOKIE_CONSENT_KEY, value);
+                    localStorage.setItem('cookie_consent_date', new Date().toISOString());
+                } catch (e) {
+                    console.warn('Could not save cookie consent');
+                }
+            }
+
+            function showBanner() {
+                if (banner) {
+                    banner.classList.add('show');
+                }
+            }
+
+            function hideBanner() {
+                if (banner) {
+                    banner.classList.remove('show');
+                }
+            }
+
+            // Check if user has already given consent
+            const consent = getCookieConsent();
+            if (!consent) {
+                // Show banner after 1 second for better UX
+                setTimeout(showBanner, 1000);
+            }
+
+            // Global functions for buttons
+            window.acceptCookies = function() {
+                setCookieConsent('all');
+                hideBanner();
+                // Initialize analytics if needed
+                if (typeof gtag !== 'undefined') {
+                    gtag('consent', 'update', {
+                        'analytics_storage': 'granted',
+                        'ad_storage': 'granted'
+                    });
+                }
+                trackEvent('cookie_consent', { type: 'accept_all' });
+            };
+
+            window.rejectCookies = function() {
+                setCookieConsent('necessary');
+                hideBanner();
+                // Disable analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('consent', 'update', {
+                        'analytics_storage': 'denied',
+                        'ad_storage': 'denied'
+                    });
+                }
+                trackEvent('cookie_consent', { type: 'necessary_only' });
+            };
+        })();
+    </script>
 </body>
 </html>

@@ -361,7 +361,10 @@ async function fetchOffers(category = 'all') {
 function displayOffers(offers) {
     const container = document.getElementById('offers-container');
 
-    if (offers.length === 0) {
+    // Apply filters if they exist
+    const filtered = (typeof applyFilters === 'function') ? applyFilters(offers) : offers;
+
+    if (filtered.length === 0) {
         container.innerHTML = `
             <div class="loading">
                 <p>Nessuna offerta disponibile al momento. Controlla più tardi!</p>
@@ -373,7 +376,7 @@ function displayOffers(offers) {
     const grid = document.createElement('div');
     grid.className = 'offers-grid';
 
-    offers.forEach(offer => {
+    filtered.forEach(offer => {
         const card = createOfferCard(offer);
         grid.appendChild(card);
     });
@@ -405,9 +408,9 @@ function createOfferCard(offer) {
 
     card.innerHTML = `
         ${discountBadge}
-        <img src="${imageUrl}" 
-             alt="${sanitizeInput(offer.product_name)}" 
-             class="offer-image" 
+        <img src="${imageUrl}"
+             alt="${sanitizeInput(offer.product_name)}"
+             class="offer-image"
              loading="lazy"
              onerror="this.src='https://via.placeholder.com/400x280/1a1f28/ff6b35?text=No+Image'">
         <div class="offer-content">
@@ -415,8 +418,8 @@ function createOfferCard(offer) {
             <h3 class="offer-title">${sanitizeInput(offer.product_name)}</h3>
             ${offer.description ? `<p class="offer-description">${sanitizeInput(offer.description)}</p>` : ''}
             ${priceHTML}
-            <a href="${offer.affiliate_link}" 
-               target="_blank" 
+            <a href="${offer.affiliate_link}"
+               target="_blank"
                rel="noopener noreferrer nofollow"
                class="offer-cta"
                onclick="trackClick(${offer.id})">
@@ -424,6 +427,32 @@ function createOfferCard(offer) {
             </a>
         </div>
     `;
+
+    // Add wishlist heart button if wishlist is available
+    if (typeof wishlist !== 'undefined') {
+        const heartBtn = document.createElement('button');
+        heartBtn.className = 'wishlist-heart-btn';
+        heartBtn.setAttribute('data-wishlist-id', offer.id);
+        heartBtn.setAttribute('aria-label', 'Aggiungi alla wishlist');
+        heartBtn.innerHTML = wishlist.has(offer.id) ? '❤️' : '🤍';
+        if (wishlist.has(offer.id)) {
+            heartBtn.classList.add('active');
+        }
+
+        heartBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWishlistItem(offer.id, {
+                id: offer.id,
+                name: offer.product_name,
+                price: offer.discounted_price ? `€${offer.discounted_price.toFixed(2)}` : 'N/A',
+                image: offer.image_url || 'https://via.placeholder.com/100',
+                link: offer.affiliate_link
+            });
+        };
+
+        card.insertBefore(heartBtn, card.firstChild);
+    }
 
     return card;
 }
@@ -837,48 +866,6 @@ function resetFilters() {
     fetchOffers(state.currentCategory);
 }
 
-// ============================================
-// ENHANCED OFFER DISPLAY
-// ============================================
-
-// Override createOfferCard to add wishlist button
-const originalCreateOfferCard = createOfferCard;
-function createOfferCard(offer) {
-    const card = originalCreateOfferCard(offer);
-
-    // Add wishlist heart button
-    const heartBtn = document.createElement('button');
-    heartBtn.className = 'wishlist-heart-btn';
-    heartBtn.setAttribute('data-wishlist-id', offer.id);
-    heartBtn.setAttribute('aria-label', 'Aggiungi alla wishlist');
-    heartBtn.innerHTML = wishlist.has(offer.id) ? '❤️' : '🤍';
-    if (wishlist.has(offer.id)) {
-        heartBtn.classList.add('active');
-    }
-
-    heartBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleWishlistItem(offer.id, {
-            id: offer.id,
-            name: offer.product_name,
-            price: offer.discounted_price ? `€${offer.discounted_price.toFixed(2)}` : 'N/A',
-            image: offer.image_url || 'https://via.placeholder.com/100',
-            link: offer.affiliate_link
-        });
-    };
-
-    card.insertBefore(heartBtn, card.firstChild);
-
-    return card;
-}
-
-// Override displayOffers to apply filters
-const originalDisplayOffers = displayOffers;
-function displayOffers(offers) {
-    const filtered = applyFilters(offers);
-    originalDisplayOffers(filtered);
-}
 
 // ============================================
 // INITIALIZATION WITH NEW FEATURES

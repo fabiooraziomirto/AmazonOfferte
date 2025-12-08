@@ -2,12 +2,17 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://https://trovailregaloperfetto.pages.dev/sitemap.xml
+Sitemap: https://trovailregaloperfetto.pages.dev/sitemap.xml
 
 # Security
 User-agent: *
 Disallow: /admin/
 Disallow: /api/internal/
+Disallow: /js/
+Disallow: /*.json$
+
+# Crawl delay (optional, to be kind to servers)
+Crawl-delay: 1
 
 # Amazon affiliate disclosure
 # This site participates in the Amazon Services LLC Associates Program

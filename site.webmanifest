@@ -1,0 +1,68 @@
+{
+  "name": "Deal Hunter - Offerte Amazon",
+  "short_name": "Deal Hunter",
+  "description": "Le migliori offerte Amazon con sconti verificati fino al 70%",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e14",
+  "theme_color": "#ff6b35",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "deals", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Cerca Prodotti",
+      "short_name": "Cerca",
+      "description": "Cerca prodotti su Amazon",
+      "url": "/?tab=search",
+      "icons": [
+        {
+          "src": "/favicon-32x32.png",
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "Trova Regalo",
+      "short_name": "Regalo",
+      "description": "Trova il regalo perfetto",
+      "url": "/?tab=gift",
+      "icons": [
+        {
+          "src": "/favicon-32x32.png",
+          "sizes": "32x32"
+        }
+      ]
+    }
+  ]
+}

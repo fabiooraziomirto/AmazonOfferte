@@ -5,9 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Le Migliori Offerte Amazon - Sconti Imperdibili</title>
     <meta name="description" content="Scopri le migliori offerte Amazon selezionate per te. Sconti fino al 70% su elettronica, casa, moda e molto altro.">
-    
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0a0e14">
+    <meta name="msapplication-TileColor" content="#ff6b35">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://gift-finder-api.fabmi1234.workers.dev">
+    <link rel="dns-prefetch" href="https://www.amazon.it">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" as="style">
+    <link rel="preload" href="/js/main.js" as="script">
+
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -941,6 +960,19 @@
         .offer-card:nth-child(4) { animation-delay: 0.4s; }
         .offer-card:nth-child(5) { animation-delay: 0.5s; }
         .offer-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
     <meta http-equiv="Content-Security-Policy" 
         content="default-src 'self'; 
@@ -981,27 +1013,114 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@type": "Organization",
   "name": "Deal Hunter",
   "url": "https://trovailregaloperfetto.pages.dev",
-  "description": "Le migliori offerte Amazon selezionate per te",
+  "logo": "https://trovailregaloperfetto.pages.dev/logo.png",
+  "description": "Aggregatore delle migliori offerte Amazon Italia con sconti verificati",
+  "sameAs": [
+    "https://t.me/amazondeal_me"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Service",
+    "email": "privacy@dealhunter.com"
+  }
+}
+</script>
+
+<!-- Structured Data - WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Deal Hunter - Offerte Amazon",
+  "alternateName": "Deal Hunter",
+  "url": "https://trovailregaloperfetto.pages.dev",
+  "description": "Le migliori offerte Amazon selezionate per te. Sconti fino al 70%.",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://trovailregaloperfetto.pages.dev/?q={search_term_string}",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.amazon.it/s?k={search_term_string}&tag=fabmi123402-21"
+    },
     "query-input": "required name=search_term_string"
   }
 }
 </script>
 
-<!-- Structured Data - ItemList (per le offerte) -->
+<!-- Structured Data - CollectionPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ItemList",
+  "@type": "CollectionPage",
   "name": "Offerte Amazon del Giorno",
-  "description": "Sconti verificati su Amazon Italia",
-  "numberOfItems": 50,
-  "itemListElement": []
+  "description": "Raccolta aggiornata quotidianamente delle migliori offerte Amazon Italia",
+  "url": "https://trovailregaloperfetto.pages.dev/",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Offerte Amazon Verificate",
+    "description": "Sconti verificati fino al 70% su Amazon Italia",
+    "numberOfItems": 50
+  }
+}
+</script>
+
+<!-- Structured Data - FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Come funzionano i link di affiliazione Amazon?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "I link presenti su questo sito sono link di affiliazione Amazon che ci permettono di guadagnare una piccola commissione sugli acquisti idonei. Questo NON comporta alcun costo aggiuntivo per te. Il prezzo che paghi su Amazon rimane invariato."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quanto posso risparmiare con le offerte Amazon?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Le offerte selezionate su Deal Hunter offrono sconti verificati fino al 70% su migliaia di prodotti Amazon nelle categorie elettronica, casa, moda, sport, cucina e bellezza. Gli sconti vengono aggiornati quotidianamente."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Come vengono selezionate le offerte?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ogni offerta viene verificata e selezionata manualmente dal nostro team. Controlliamo la validità dello sconto, la reputazione del venditore e le recensioni del prodotto per garantirti solo le migliori offerte Amazon."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso ricevere notifiche sulle nuove offerte?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sì! Puoi iscriverti alla nostra newsletter gratuita o unirti al nostro canale Telegram @amazondeal_me per ricevere aggiornamenti quotidiani sulle migliori offerte Amazon."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- Structured Data - BreadcrumbList -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://trovailregaloperfetto.pages.dev/"
+    }
+  ]
 }
 </script>
 
@@ -1024,7 +1143,7 @@
     </header>
 
     <main class="container">
-        <section class="hero">
+        <section class="hero" aria-label="Introduzione">
             <h1>
                 Le Migliori <span class="gradient-text">Offerte Amazon</span><br>
                 Selezionate per Te
@@ -1035,28 +1154,31 @@
         </section>
 
         <!-- Tab Section -->
-        <div class="tab-section">
-            <div class="tabs-nav">
-                <button class="tab-btn active" data-tab="search" onclick="switchTab('search')">
+        <section class="tab-section" aria-label="Strumenti di ricerca">
+            <div class="tabs-nav" role="tablist">
+                <button class="tab-btn active" data-tab="search" onclick="switchTab('search')" role="tab" aria-selected="true" aria-controls="search-tab">
                     <span class="tab-icon">🔍</span>
                     <span>Cerca Prodotto</span>
                 </button>
-                <button class="tab-btn" data-tab="gift" onclick="switchTab('gift')">
+                <button class="tab-btn" data-tab="gift" onclick="switchTab('gift')" role="tab" aria-selected="false" aria-controls="gift-tab">
                     <span class="tab-icon">🎁</span>
                     <span>Trova Regalo Perfetto</span>
                 </button>
             </div>
 
             <!-- Search Tab -->
-            <div class="tab-content active" id="search-tab">
+            <div class="tab-content active" id="search-tab" role="tabpanel" aria-labelledby="search-tab">
+                <h2 class="sr-only">Cerca prodotti Amazon</h2>
                 <div class="search-box">
-                    <input 
-                        type="text" 
-                        class="search-input" 
+                    <label for="search-input" class="sr-only">Cerca prodotti su Amazon</label>
+                    <input
+                        type="text"
+                        class="search-input"
                         id="search-input"
                         placeholder="Cerca prodotti su Amazon... (es: cuffie wireless, smartwatch)"
+                        aria-label="Campo di ricerca prodotti Amazon"
                     >
-                    <button class="search-btn" onclick="searchAmazon()">Cerca</button>
+                    <button class="search-btn" onclick="searchAmazon()" aria-label="Cerca prodotti">Cerca</button>
                 </div>
                 <div class="category-pills">
                     <span class="pill" onclick="quickSearch('elettronica')">📱 Elettronica</span>
@@ -1069,7 +1191,8 @@
             </div>
 
             <!-- Gift Finder Tab -->
-            <div class="tab-content" id="gift-tab">
+            <div class="tab-content" id="gift-tab" role="tabpanel" aria-labelledby="gift-tab">
+                <h2 class="sr-only">Trova il regalo perfetto</h2>
                 <div class="quiz-progress">
                     <div class="quiz-progress-bar" id="progress-bar"></div>
                 </div>
@@ -1239,10 +1362,11 @@
                     <button class="btn-restart" onclick="restartQuiz()">🔄 Ricomincia</button>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Filter Bar -->
-        <div class="filter-bar">
+        <section class="filter-bar" aria-label="Filtri per categoria">
+            <h2 class="sr-only">Filtra offerte per categoria</h2>
             <button class="filter-btn active" data-category="all">Tutte</button>
             <button class="filter-btn" data-category="elettronica">📱 Elettronica</button>
             <button class="filter-btn" data-category="casa">🏠 Casa</button>
@@ -1251,15 +1375,16 @@
             <button class="filter-btn" data-category="giochi">🎮 Giochi</button>
             <button class="filter-btn" data-category="cucina">🍳 Cucina</button>
             <button class="filter-btn" data-category="bellezza">💄 Bellezza</button>
-        </div>
+        </section>
 
         <!-- Offers Grid -->
-        <div id="offers-container">
-            <div class="loading">
+        <section id="offers-container" aria-label="Offerte del giorno">
+            <h2 class="sr-only">Offerte Amazon di oggi</h2>
+            <div class="loading" role="status" aria-live="polite">
                 <div class="spinner"></div>
                 <p>Caricamento offerte...</p>
             </div>
-        </div>
+        </section>
 
         <!-- Newsletter -->
         <section class="newsletter">
